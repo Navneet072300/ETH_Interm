@@ -7,6 +7,7 @@ contract Auction {
     uint public highestBid;
     bool public auctionEnded;
 
+
     mapping(address => uint) returnsPending;
     
     constructor() {

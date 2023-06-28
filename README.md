@@ -17,52 +17,25 @@ Once you are on the Remix website, create a new file by clicking on the "+" icon
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Auction {
-    address public auctioneer;
-    address public highestBidder;
-    uint public highestBid;
-    bool public auctionEnded;
+contract AssertionExample {
+    uint256 public x;
+      uint256 public a;
+        uint256 public b;
 
-    mapping(address => uint) returnsPending;
-    
-    constructor() {
-        auctioneer = msg.sender;
-    }
-    
-    function placeBid() external payable {
-        require(!auctionEnded, "Auction has already ended");
-        require(msg.value > highestBid, "Bid value must be higher than the current highest bid");
-        
-        if (highestBid != 0) {
-
-            returnsPending[highestBidder] += highestBid;
-            // Return funds to the previous highest bidder
-            assert(payable(highestBidder).send(highestBid));
-        }
-        
-        highestBidder = msg.sender;
-        highestBid = msg.value;
-    }
-    
-    function endAuction() external {
-        require(msg.sender == auctioneer, "Only the auctioneer can end the auction");
-        require(!auctionEnded, "Auction has already ended");
-        
-        auctionEnded = true;
-    }
-    
-    function withdraw() external {
-        require(auctionEnded, "Auction has not ended yet");
-        
-        if (msg.sender == highestBidder) {
-            // Transfer the winning bid amount to the highest bidder
-            assert(payable(highestBidder).send(highestBid));
-        }
+    function setX(uint256 _x) external {
+        require(_x > 0, "Value must be greater than zero");
+        x = _x;
     }
 
-    function cancelAuction() public view  {
-        require(msg.sender == auctioneer, "Only the auctioneer can cancel the auction");
-        revert("Auction has been cancelled");
+    function assertExample(uint256 _a, uint256 _b) external  {
+         a = _a;
+         b = _b;
+        assert(a >= b);
+    }
+
+    function revertExample() external pure {
+        string memory message = "An error occurred";
+        revert(message);
     }
 }
 
@@ -72,12 +45,14 @@ contract Auction {
 
 To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar. Make sure the "Compiler" option is set to "0.8.4" (or another compatible version), and then click on the "Compile ethproof.sol" button.
 Once the code is compiled, you can deploy the contract by clicking on the "Deploy & Run Transactions" tab in the left-hand sidebar. Select the "ethpintrem" contract from the dropdown menu, and then click on the "Deploy" button.
-Once the contract is deployed, you can enter the bidding amount and click on the placeBid function to deploy the auction.
-In this e-auction contract, we have the placeBid() function that allows bidders to place their bids by sending ether to the contract. The function uses the require() statement to check if the auction has not ended and if the bid value is higher than the current highest bid. It also includes the assert() statement to ensure that funds are returned to the previous highest bidder (if any) using the send() function.
-The endAuction() function is used by the auctioneer to end the auction. It verifies that only the auctioneer can call this function using the require() statement.
-The withdraw() function allows the highest bidder to withdraw their funds after the auction has ended. It uses the require() statement to check if the auction has ended and includes the assert() statement to transfer the winning bid amount to the highest bidder.
-The cancelAuction() function allows the auctioneer to cancel the auction. It uses the require() statement to ensure that only the auctioneer can call this function and uses the revert() statement to revert the transaction with a custom error message.
+Once the contract is deployed, you can enter the value of x, a and b and use the require, assert and revert function.
+In this, the AssertionExample contract has three functions that showcase the usage of require(), assert(), and revert().
 
+The setX function demonstrates the use of require(). It takes an input _x and sets the state variable x to its value. However, before setting the value, it uses require() to validate that _x is greater than zero. If the condition evaluates to false, the function will throw an exception with the given error message.
+
+The assertExample function showcases the assert() statement. Inside the function, two local variables a and b are declared and assigned values. Then, the assert() statement checks if a is greater than or equal to b. If the condition is false, it indicates an internal error, and the transaction will be reverted.
+
+The revertExample function demonstrates the use of revert(). It simply reverts the current transaction with a given error message.
 ## Authors
 
 Navneet Shahi 
